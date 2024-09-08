@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quick Help</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Quick Help</h1>
+  <div class="quick-help-buttons">
+    <button id="scheduleBtn">Create Schedule</button>
+    <button id="setTimerBtn">Set Timer</button> <!-- New Timer Button -->
+    <button id="sendMessageBtn">Quick Help</button>
+    <a href="home.html" class="home-button">Go to Homepage</a>
+  </div>
+  
+  <div id="scheduleTextbox"></div>
+  <div id="timerTextbox"></div> <!-- New Timer Div -->
+
+  <script>
+    // Event listener for the Schedule button
+    document.getElementById('scheduleBtn').addEventListener('click', function() {
+      document.getElementById('scheduleTextbox').innerHTML = `
+        <h2>Type Your Schedule</h2>
+        <textarea id="scheduleInput" rows="6" cols="50" placeholder="Write your schedule here..."></textarea>
+      `;
+    });
+
+    // Event listener for the Timer button
+    document.getElementById('setTimerBtn').addEventListener('click', function() {
+      document.getElementById('timerTextbox').innerHTML = `
+        <h2>Set Study Timer</h2>
+        <label for="minutes">Enter Minutes:</label>
+        <input type="number" id="minutes" placeholder="Enter minutes">
+        <button id="start-btn">Start Timer</button>
+        <button id="stop-btn">Stop Timer</button>
+        <h3 id="timer-display">00:00</h3>
+      `;
+
+      // Timer functionality
+      let countdown;
+      let isRunning = false;
+
+      const startBtn = document.getElementById("start-btn");
+      const stopBtn = document.getElementById("stop-btn");
+      const timerDisplay = document.getElementById("timer-display");
+      const minutesInput = document.getElementById("minutes");
+
+      startBtn.addEventListener("click", function startTimer() {
+        if (isRunning) return; // Prevent multiple timers from running at the same time
+
+        const minutes = parseInt(minutesInput.value);
+
+        if (isNaN(minutes) || minutes <= 0) {
+          alert("Please enter a valid number of minutes.");
+          return;
+        }
+
+        const now = Date.now();
+        const then = now + minutes * 60000; // Convert minutes to milliseconds
+        displayTimeLeft(minutes * 60);
+        isRunning = true;
+
+        countdown = setInterval(() => {
+          const secondsLeft = Math.round((then - Date.now()) / 1000);
+
+          // Check if time has ended
+          if (secondsLeft <= 0) {
+            clearInterval(countdown);
+            isRunning = false;
+            alert("Time's up!");
+            return;
+          }
+
+          displayTimeLeft(secondsLeft);
+        }, 1000);
+      });
+
+      stopBtn.addEventListener("click", function stopTimer() {
+        clearInterval(countdown);
+        isRunning = false;
+      });
+
+      function displayTimeLeft(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainderSeconds = seconds % 60;
+        const display = `${minutes}:${remainderSeconds < 10 ? "0" : ""}${remainderSeconds}`;
+        timerDisplay.textContent = display;
+      }
+    });
+
+    // Event listener for the Quick Help button
+    document.getElementById('sendMessageBtn').addEventListener('click', function() {
+      const message = prompt('Enter your message for the tutor:');
+      if (message) {
+        alert('Message sent to tutor: ' + message);
+      }
+    });
+  </script>
+</body>
+</html>
